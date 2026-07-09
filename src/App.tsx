@@ -1,14 +1,21 @@
-import './App.css'
+import {  Routes, Route } from "react-router-dom";
+import Home from "./pages/home/Home";
+import Login from "./pages/login/Login";
+import ProtectedRoutes from "./protected/ProtectedRoutes";
 
-function App() {
-
+export default function App() {
   return (
     <>
-      <div>
-        asdasdas
-      </div>
-    </>
-  )
-}
+        <ProtectedRoutes>
+          <Routes>
 
-export default App
+          <Route path="/" element={<Home />} />
+          </Routes>
+        </ProtectedRoutes>
+      <Routes>
+        {/* Home Route */}
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </>
+  );
+}
