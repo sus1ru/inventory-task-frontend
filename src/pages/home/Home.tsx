@@ -239,9 +239,9 @@ function Home() {
   const [activeTab, setActiveTab] = useState('products');
 
   // RTK Query API Hooks
-  const { data: products = [], isLoading, error, refetch } = useGetProductsQuery();
+  const { data: products, isLoading, error, refetch } = useGetProductsQuery(null);
     const { data: dashboardData = {} as Dashboard} = useGetDashboardQuery();
-  const productsData : Product [] = products.results
+  const productsData : Product [] = products?.results || [];
   const [addProduct] = useAddProductMutation();
   const [updateProduct] = useUpdateProductMutation();
   const [deleteProduct] = useDeleteProductMutation();
@@ -354,10 +354,7 @@ function Home() {
 
               {activeTab === 'products' && (
                 <ProductTable
-                  // products={productsData}
-                  // onAddProduct={handleOpenAddModal}
-                  // onEditProduct={handleOpenEditModal}
-                  // onDeleteProduct={handleOpenDeleteModal}
+                 
                 />
               )}
 

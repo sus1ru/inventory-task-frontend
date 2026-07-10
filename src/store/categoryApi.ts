@@ -1,3 +1,4 @@
+import type { categories } from '@/components/ProductTable';
 import type { Category } from '@/types';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
@@ -15,7 +16,7 @@ export const categoryApi = createApi({
   }),
   tagTypes: ['Category'],
   endpoints: (builder) => ({
-    getCategories: builder.query<Category[], void>({
+    getCategories: builder.query<categories , void>({
       query: () => '/categories/',
       providesTags: ['Category'],
     }),

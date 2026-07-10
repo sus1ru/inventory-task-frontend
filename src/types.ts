@@ -24,10 +24,14 @@ export interface Dashboard
 }
 
 export interface Category {
-  id: string;
+  id: number;
   name: string;
   created_at: string;
 }
 
 export type GetProductsQuery = 
   string | number | null ;
+
+export interface LoginResponse {
+
+}

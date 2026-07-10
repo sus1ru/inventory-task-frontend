@@ -18,9 +18,14 @@ export const productsApi = createApi({
    getProducts: builder.query<ProductsResponse, GetProductsQuery>({
   query: (query) => {
     if (typeof query === "string") {
-      return `/products/?search=${encodeURIComponent(query)}`;
+    if (query.startsWith("http")) {
+      const search = new URL(query).search;
+      console.log(search,"asdasdsearch")
+      return `/products/${search}`;
     }
 
+    return `/products/?search=${encodeURIComponent(query)}`;
+  }
     if (typeof query === "number") {
       return `/products/?category=${query}`;
     }

@@ -9,7 +9,7 @@ interface CategoriesViewProps {
 }
 
 export const CategoriesView: React.FC<CategoriesViewProps> = ({ products, onSelectCategory }) => {
-  const categories = [
+  const categories1 = [
     { name: 'Electronics', description: 'Computers, laptops, and tablets', icon: FiCpu },
     { name: 'Peripherals', description: 'Keyboards, mice, and other input devices', icon: MdOutlineKeyboard },
     { name: 'Audio', description: 'Headphones, earphones, and speakers', icon: FiHeadphones },
@@ -17,9 +17,10 @@ export const CategoriesView: React.FC<CategoriesViewProps> = ({ products, onSele
     { name: 'Displays', description: 'Monitors, screens, and display panels', icon: FiMonitor },
   ];
 
+  
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {categories.map((cat) => {
+      {categories1.map((cat) => {
         const Icon = cat.icon;
         const catProducts = products.filter(p => p.category === cat.name);
         const count = catProducts.length;

@@ -19,22 +19,24 @@ import type { Category, Product } from '../types';
 import { useGetProductsQuery } from '@/store/productsApi';
 import { useGetCategoriesQuery } from '@/store/categoryApi';
 
-interface ProductTableProps {
-  products: Product[];
-  onAddProduct: () => void;
-  onEditProduct: (product: Product) => void;
-  onDeleteProduct: (product: Product) => void;
+export interface categories {
+  count: number,
+  results: Category [],
+  next: string | null,
+  previous: string | null,
 }
 
-export const ProductTable: React.FC<ProductTableProps> = (
+export const ProductTable = (
   // products,
   // onAddProduct,
   // onEditProduct,
   // onDeleteProduct,
 ) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-    const [selectedCategoryName, setSelectedCategoryName] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string | null>(null);
+  const [selectedPage, setSelectedPage] = useState<string | null | undefined>();
+
 
   const [currentPage, setCurrentPage] = useState(1);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
@@ -59,30 +61,21 @@ export const ProductTable: React.FC<ProductTableProps> = (
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, selectedCategory]);
+  
 
-  // Filter products based on search term & category
-  // const filteredProducts = products.filter((product) => {
-  //   const matchesSearch =
-  //     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     product.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     product.id.toLowerCase().includes(searchTerm.toLowerCase());
+console.log("selectedPage", selectedPage)
+const query =
+searchTerm || selectedCategory || selectedPage || null;
 
-  //   const matchesCategory = selectedCategory ? product.category === selectedCategory : true;
-
-  //   return matchesSearch && matchesCategory;
-  // });
- const query =
-  searchTerm || selectedCategory || null;
-
-const {
-  data: products,
-  isLoading,
-  error,
-} = useGetProductsQuery(query);
-const currentProducts = products?.results || [];
-        const { data: categories = []} = useGetCategoriesQuery();
-
-  const currentCategories = categories.results
+console.log("Asdasdadadad")
+  const {
+    data: products,
+    isLoading,
+    error,
+  } = useGetProductsQuery(query);
+  const currentProducts = products?.results || [];
+  const { data: categories  } = useGetCategoriesQuery();
+  const currentCategories = categories?.results
   const totalItems = currentProducts?.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -115,8 +108,7 @@ const currentProducts = products?.results || [];
     }).format(val);
   };
 
-
-  return ( 
+  return (
     <div className="space-y-4">
       {/* Search and Filters Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -162,7 +154,7 @@ const currentProducts = products?.results || [];
                   {selectedCategory === null && <FiCheck className="w-3.5 h-3.5 text-blue-600" />}
                 </button>
                 <div className="h-px bg-slate-100 my-1"></div>
-                {currentCategories?.map((cat:Category) => (
+                {currentCategories?.map((cat: Category) => (
                   <button
                     key={cat.id}
                     onClick={() => {
@@ -256,13 +248,12 @@ const currentProducts = products?.results || [];
                     {/* Status badge */}
                     <td className="px-6 py-4.5 whitespace-nowrap">
                       <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
-                          product.status === 'In Stock'
-                            ? 'bg-[#dcfce7] text-[#16a34a]'
-                            : product.status === 'Low Stock'
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${product.status === 'In Stock'
+                          ? 'bg-[#dcfce7] text-[#16a34a]'
+                          : product.status === 'Low Stock'
                             ? 'bg-[#fef3c7] text-[#d97706]'
                             : 'bg-red-50 text-red-600'
-                        }`}
+                          }`}
                       >
                         {product.status}
                       </span>
@@ -292,7 +283,7 @@ const currentProducts = products?.results || [];
               ) : (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-slate-400 text-sm">
-                    No products found matching the filters... 
+                    No products found matching the filters...
                   </td>
                 </tr>
               )}
@@ -311,8 +302,12 @@ const currentProducts = products?.results || [];
             <div className="flex items-center space-x-1">
               {/* Prev Button */}
               <button
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
+                onClick={() => {
+
+                  setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  setSelectedPage(products?.previous)
+                }}
+                disabled={products?.previous === null}
                 className="p-2 border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50 disabled:opacity-50 disabled:hover:bg-white transition-colors"
               >
                 <FiChevronLeft className="w-4 h-4" />
@@ -323,11 +318,10 @@ const currentProducts = products?.results || [];
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`w-9 h-9 flex items-center justify-center rounded-lg text-sm font-semibold transition-colors ${
-                    currentPage === page
-                      ? 'bg-blue-600 text-white'
-                      : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
-                  }`}
+                  className={`w-9 h-9 flex items-center justify-center rounded-lg text-sm font-semibold transition-colors ${currentPage === page
+                    ? 'bg-blue-600 text-white'
+                    : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
                 >
                   {page}
                 </button>
@@ -335,8 +329,11 @@ const currentProducts = products?.results || [];
 
               {/* Next Button */}
               <button
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
+                onClick={() => {
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+                  setSelectedPage(products?.next);
+                }}
+                disabled={products?.next === null}
                 className="p-2 border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50 disabled:opacity-50 disabled:hover:bg-white transition-colors"
               >
                 <FiChevronRight className="w-4 h-4" />

@@ -7,7 +7,7 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ title }) => {
   const [open, setOpen] = React.useState(false);
-  const divRef = useRef({} as HTMLDivElement);
+const divRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleLogout(event: MouseEvent) {

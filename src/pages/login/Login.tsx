@@ -1,3 +1,4 @@
+import { useLoginMutation } from "@/store/loginApi";
 import { useState } from "react";
 
 export default function Login() {
@@ -5,7 +6,9 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [login, { isLoading, error1 }] = useLoginMutation();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -16,14 +19,16 @@ export default function Login() {
     }
 
     // mock login check (replace with backend later)
-    if (email !== "bibesh@gmail.com" || password !== "bibesh") {
+    
+    try {
+      const data = await login({ username: email, password }).unwrap();
+      console.log("Login successful", data);
+      localStorage.setItem("token",data.token);
+      window.location.href = "/"
+    } catch (err) {
+      console.error("Login failed", err);
       setError("Invalid email or password");
-      return;
     }
-
-    console.log("Login successful");
-    localStorage.setItem("token", "mock-token");
-    window.location.href = "/"
   };
 
   return (
@@ -47,8 +52,8 @@ export default function Login() {
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
 
           <input
-            type="email"
-            placeholder="Email"
+            type="name"
+            placeholder="Name"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
