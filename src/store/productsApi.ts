@@ -1,10 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { GetProductsQuery, Product, ProductsResponse } from '../types';
+import type { AddProductRequest, EditProductRequest, GetProductsQuery, Product, ProductsResponse } from '../types';
+const apiUrl = import.meta.env.VITE_API_URL;
+
 
 export const productsApi = createApi({
   reducerPath: 'productsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://192.168.18.3:8001/', // Assumed base URL for the API
+    baseUrl: apiUrl, // Use the API URL from environment variables
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('token');
       if (token) {
@@ -34,17 +36,17 @@ export const productsApi = createApi({
   },
   providesTags: ["Product"],
 }),
-    addProduct: builder.mutation<Product, Omit<Product, 'id'>>({
+    addProduct: builder.mutation<Product, Omit<AddProductRequest, 'id'>>({
       query: (body) => ({
-        url: '/products',
+        url: '/products/',
         method: 'POST',
         body,
       }),
       invalidatesTags: ['Product'],
     }),
-    updateProduct: builder.mutation<Product, Product>({
+    updateProduct: builder.mutation<Product, EditProductRequest>({
       query: ({ id, ...body }) => ({
-        url: `/products/${id}`,
+        url: `/products/${id}/`,
         method: 'PUT',
         body,
       }),

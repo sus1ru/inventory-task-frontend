@@ -1,10 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { Dashboard } from '../types';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export const DashboardApi = createApi({
   reducerPath: 'dashboardApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://192.168.18.3:8001/', // Assumed base URL for the API
+    baseUrl: apiUrl, // Use the API URL from environment variables
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('token');
       if (token) {

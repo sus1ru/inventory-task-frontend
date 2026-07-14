@@ -25,17 +25,21 @@ export interface categories {
   next: string | null,
   previous: string | null,
 }
-
-export const ProductTable = (
-  // products,
-  // onAddProduct,
-  // onEditProduct,
-  // onDeleteProduct,
-) => {
+interface ProductTableProps {
+  onAddProduct: () => void;
+  onEditProduct: (product: Product) => void;
+  onDeleteProduct: (product: Product) => void;
+}
+export const ProductTable = ({
+  onAddProduct,
+  onEditProduct,
+  onDeleteProduct,
+}: ProductTableProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [selectedCategoryName, setSelectedCategoryName] = useState<string | null>(null);
   const [selectedPage, setSelectedPage] = useState<string | null | undefined>();
+  const [status, setStatus] = useState<string | null>("");
 
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -47,6 +51,8 @@ export const ProductTable = (
   // Categories list
 
   // Close dropdown on click outside
+  
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -174,13 +180,13 @@ console.log("Asdasdadadad")
         </div>
 
         {/* Add Product Button */}
-        {/* <button
+        <button
           onClick={onAddProduct}
           className="flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-all shadow-sm shadow-blue-500/10 active:scale-[0.98]"
         >
           <FiPlus className="w-4 h-4" />
           <span>Add Product</span>
-        </button> */}
+        </button>
       </div>
 
       {/* Products Table Card */}
@@ -211,8 +217,24 @@ console.log("Asdasdadadad")
             </thead>
             <tbody className="divide-y divide-slate-100">
               {currentProducts?.length > 0 ? (
-                currentProducts?.map((product) => (
-                  <tr key={product.id} className="hover:bg-slate-50/40 transition-colors">
+                currentProducts?.map((product) => {
+                    const stock =
+    product.quantity === 0
+      ? {
+          text: "Out of Stock",
+          className: "bg-red-50 text-red-600",
+        }
+      : product.quantity < 5
+      ? {
+          text: "Low Stock",
+          className: "bg-[#fef3c7] text-[#d97706]",
+        }
+      : {
+          text: "In Stock",
+          className: "bg-[#dcfce7] text-[#16a34a]",
+        };
+                  return (
+ <tr key={product.id} className="hover:bg-slate-50/40 transition-colors">
                     {/* Name & SKU */}
                     <td className="px-6 py-4.5 whitespace-nowrap">
                       <div className="flex items-center space-x-3.5">
@@ -248,19 +270,15 @@ console.log("Asdasdadadad")
                     {/* Status badge */}
                     <td className="px-6 py-4.5 whitespace-nowrap">
                       <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${product.status === 'In Stock'
-                          ? 'bg-[#dcfce7] text-[#16a34a]'
-                          : product.status === 'Low Stock'
-                            ? 'bg-[#fef3c7] text-[#d97706]'
-                            : 'bg-red-50 text-red-600'
-                          }`}
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${stock.className}`}
                       >
-                        {product.status}
+                      
+                        {stock.text}
                       </span>
                     </td>
 
                     {/* Actions */}
-                    {/* <td className="px-6 py-4.5 whitespace-nowrap text-right text-sm">
+                    <td className="px-6 py-4.5 whitespace-nowrap text-right text-sm">
                       <div className="flex items-center justify-end space-x-3.5">
                         <button
                           onClick={() => onEditProduct(product)}
@@ -277,9 +295,11 @@ console.log("Asdasdadadad")
                           <FiTrash2 className="w-4 h-4" />
                         </button>
                       </div>
-                    </td> */}
+                    </td>
                   </tr>
-                ))
+                  )
+                }                 
+                )
               ) : (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-slate-400 text-sm">

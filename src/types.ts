@@ -7,6 +7,23 @@ export interface Product {
   quantity: number;
   status: 'In Stock' | 'Low Stock' | 'Out of Stock';
 }
+export interface AddProductRequest {
+  name: string;
+  category: number;
+  price: number;
+  quantity: number;
+}
+
+
+export interface EditProductRequest {
+  id: string;
+  name: string;
+  category: number;
+  price: number;
+  quantity: number;
+}
+
+
 export interface ProductsResponse {
   results: Product[];
   count: number;

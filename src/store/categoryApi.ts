@@ -1,11 +1,12 @@
 import type { categories } from '@/components/ProductTable';
 import type { Category } from '@/types';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export const categoryApi = createApi({
   reducerPath: 'categoryApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://192.168.18.3:8001/', // Assumed base URL for the API
+    baseUrl: apiUrl, // Use the API URL from environment variables
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('token');
       if (token) {

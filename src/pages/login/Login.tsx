@@ -12,7 +12,7 @@ export default function Login() {
     e.preventDefault();
     setError("");
 
-    // simple validation
+    // simple validation`
     if (!email || !password) {
       setError("Please fill in all fields");
       return;

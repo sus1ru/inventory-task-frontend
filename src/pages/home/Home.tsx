@@ -262,21 +262,21 @@ function Home() {
     setIsAddEditOpen(true);
   };
 
-  const handleSaveProduct = async (formData: Omit<Product, 'id'> & { id?: string }) => {
-    try {
-      if (formData.id) {
-        // Editing existing product
-        await updateProduct(formData as Product).unwrap();
-      } else {
-        // Adding new product
-        await addProduct(formData).unwrap();
-      }
-      setIsAddEditOpen(false);
-    } catch (err) {
-      console.error("Failed to save product via API:", err);
-      setIsAddEditOpen(false);
-    }
-  };
+  // const handleSaveProduct = async (formData: Omit<Product, 'id'> & { id?: string }) => {
+  //   try {
+  //     if (formData.id) {
+  //       // Editing existing product
+  //       await updateProduct(formData as Product).unwrap();
+  //     } else {
+  //       // Adding new product
+  //       await addProduct(formData).unwrap();
+  //     }
+  //     setIsAddEditOpen(false);
+  //   } catch (err) {
+  //     console.error("Failed to save product via API:", err);
+  //     setIsAddEditOpen(false);
+  //   }
+  // };
 
   // Handlers for Delete
   const handleOpenDeleteModal = (product: Product) => {
@@ -354,6 +354,9 @@ function Home() {
 
               {activeTab === 'products' && (
                 <ProductTable
+                onAddProduct={handleOpenAddModal}
+                onEditProduct={handleOpenEditModal}
+                onDeleteProduct={handleOpenDeleteModal}
                  
                 />
               )}
@@ -373,7 +376,7 @@ function Home() {
       <AddEditProductModal
         isOpen={isAddEditOpen}
         onClose={() => setIsAddEditOpen(false)}
-        onSave={handleSaveProduct}
+        // onSave={handleSaveProduct}
         product={currentProduct}
       />
 

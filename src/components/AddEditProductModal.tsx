@@ -2,77 +2,84 @@ import React, { useState, useEffect } from 'react';
 import { FiX } from 'react-icons/fi';
 
 import type { Product } from '../types';
+import { useAddProductMutation, useUpdateProductMutation } from '@/store/productsApi';
+import { useGetCategoriesQuery } from '@/store/categoryApi';
 
 interface AddEditProductModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (product: Omit<Product, 'id'> & { id?: string }) => void;
   product?: Product | null;
 }
 
 export const AddEditProductModal: React.FC<AddEditProductModalProps> = ({
   isOpen,
   onClose,
-  onSave,
   product,
 }) => {
   const [name, setName] = useState('');
-  const [sku, setSku] = useState('');
-  const [category, setCategory] = useState('Electronics');
+    const [id, setId] = useState('');
+
+  const [category, setCategory] = useState(1);
   const [price, setPrice] = useState('');
   const [quantity, setQuantity] = useState('');
-  const [status, setStatus] = useState<'In Stock' | 'Low Stock' | 'Out of Stock'>('In Stock');
+    const [updated, setUpdated] = useState(false);
 
-  const categories = ['Electronics', 'Peripherals', 'Audio', 'Networking', 'Displays'];
+  // const [status, setStatus] = useState<'In Stock' | 'Low Stock' | 'Out of Stock'>('In Stock');
+    const [addProducts, { isLoading, error }] = useAddProductMutation();
+    const [updateProducts, { isLoading: isUpdating, error: updateError }] = useUpdateProductMutation();
+      const { data } = useGetCategoriesQuery();
+  const categories = data?.results
+
+
 
   useEffect(() => {
     if (product) {
       setName(product.name);
-      setSku(product.sku);
-      setCategory(product.category);
+      setCategory(Number(product.category));
       setPrice(product.price.toString());
       setQuantity(product.quantity.toString());
-      setStatus(product.status);
+      setId(product.id);
+      setUpdated(true);
+      // setStatus(product.status);
     } else {
       setName('');
-      setSku('');
-      setCategory('Electronics');
+      setCategory(1);
       setPrice('');
       setQuantity('');
-      setStatus('In Stock');
+      setUpdated(false);
+      // setStatus('In Stock');
     }
   }, [product, isOpen]);
 
   // Automatically update status based on quantity
   const handleQuantityChange = (val: string) => {
     setQuantity(val);
-    const qty = parseInt(val, 10);
-    if (isNaN(qty) || qty <= 0) {
-      setStatus('Out of Stock');
-    } else if (qty <= 10) {
-      setStatus('Low Stock');
-    } else {
-      setStatus('In Stock');
-    }
+    // const qty = parseInt(val, 10);
+    // if (isNaN(qty) || qty <= 0) {
+    //   setStatus('Out of Stock');
+    // } else if (qty <= 10) {
+    //   setStatus('Low Stock');
+    // } else {
+    //   setStatus('In Stock');
+    // }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !sku || !price || !quantity) {
+    if (!name || !price || !quantity) {
       alert('Please fill out all fields');
       return;
     }
-
-    onSave({
-      id: product?.id,
-      name,
-      sku,
-      category,
-      price: parseFloat(price),
-      quantity: parseInt(quantity, 10),
-      status,
-    });
-    onClose();
+    if (!updated && name && category && price && quantity) {
+      const data = await addProducts({name, category, price: parseFloat(price), quantity: parseInt(quantity, 10)}).unwrap();
+      // console.log(data,"data")
+      onClose();
+    }
+    if(updated == true){
+      // console.log("data",name, category, price, quantity)
+      const data = await updateProducts({id: id, name, category, price: parseFloat(price), quantity: parseInt(quantity, 10)}).unwrap();
+      onClose();
+    }
   };
 
   if (!isOpen) return null;
@@ -109,7 +116,7 @@ export const AddEditProductModal: React.FC<AddEditProductModalProps> = ({
             />
           </div>
 
-          <div>
+          {/* <div>
             <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
               SKU
             </label>
@@ -121,7 +128,7 @@ export const AddEditProductModal: React.FC<AddEditProductModalProps> = ({
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400"
               required
             />
-          </div>
+          </div> */}
 
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -133,9 +140,9 @@ export const AddEditProductModal: React.FC<AddEditProductModalProps> = ({
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
               >
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
+                {categories?.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
                   </option>
                 ))}
               </select>
@@ -143,7 +150,7 @@ export const AddEditProductModal: React.FC<AddEditProductModalProps> = ({
 
             <div>
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
-                Price ($)
+                Price (Nrs)
               </label>
               <input
                 type="number"
@@ -172,7 +179,7 @@ export const AddEditProductModal: React.FC<AddEditProductModalProps> = ({
               />
             </div>
 
-            <div>
+            {/* <div>
               <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
                 Status
               </label>
@@ -185,7 +192,7 @@ export const AddEditProductModal: React.FC<AddEditProductModalProps> = ({
                 <option value="Low Stock">Low Stock</option>
                 <option value="Out of Stock">Out of Stock</option>
               </select>
-            </div>
+            </div> */}
           </div>
 
           {/* Action Buttons */}
