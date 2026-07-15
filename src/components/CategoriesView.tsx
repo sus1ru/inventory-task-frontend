@@ -1,38 +1,45 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FiCpu, FiHeadphones, FiWifi, FiMonitor } from 'react-icons/fi';
 import { MdOutlineKeyboard } from 'react-icons/md';
 import type { Product } from '../types';
+import { useGetCategoriesQuery } from '@/store/categoryApi';
+import { useGetProductsQuery } from '@/store/productsApi';
 
 interface CategoriesViewProps {
   products: Product[];
-  onSelectCategory: (category: string) => void;
+  onSelectCategory: (category: number) => void;
+}1
+
+export const CategoriesView: React.FC<CategoriesViewProps> = ({ onSelectCategory }) => {
+  const [categories, setCategories] = React.useState([])
+
+  const {data, error} = useGetCategoriesQuery();
+  const {data: productsData, isLoading, isError} = useGetProductsQuery(null);
+
+  useEffect(() => {
+    if (data?.results) {
+      setCategories(data?.results);
+    }
+  }, [data]);
+
+  if (error) {
+  return <p>Something went wrong.</p>;
 }
 
-export const CategoriesView: React.FC<CategoriesViewProps> = ({ products, onSelectCategory }) => {
-  const categories1 = [
-    { name: 'Electronics', description: 'Computers, laptops, and tablets', icon: FiCpu },
-    { name: 'Peripherals', description: 'Keyboards, mice, and other input devices', icon: MdOutlineKeyboard },
-    { name: 'Audio', description: 'Headphones, earphones, and speakers', icon: FiHeadphones },
-    { name: 'Networking', description: 'Routers, modems, and networking equipment', icon: FiWifi },
-    { name: 'Displays', description: 'Monitors, screens, and display panels', icon: FiMonitor },
-  ];
-
-  
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {categories1.map((cat) => {
-        const Icon = cat.icon;
-        const catProducts = products.filter(p => p.category === cat.name);
-        const count = catProducts.length;
-        const totalStock = catProducts.reduce((acc, p) => acc + p.quantity, 0);
-        console.log(catProducts)
+      {categories.map((cat) => {
+        const Icon = FiCpu;
+        const catProducts = productsData?.results?.filter(p => p?.category === cat?.id);
+        const count = catProducts?.length;
+        const totalStock = catProducts?.reduce((acc, p) => acc + (p.quantity || 0), 0);
         // const avgPrice = count
         //   ? catProducts.reduce((acc, p) => acc + p.price, 0) / count
         //   : 0;1
 
         return (
           <div
-            key={cat.name}
+            key={cat?.id}
             className="bg-white border border-slate-100 cursor-pointer rounded-xl p-6 shadow-[0_1px_3px_0_rgba(0,0,0,0.02)] flex flex-col justify-between hover:shadow-md transition-all group"
           >
             <div>
@@ -43,7 +50,7 @@ export const CategoriesView: React.FC<CategoriesViewProps> = ({ products, onSele
 
               {/* Title & Desc */}
               <h3 className="text-md font-bold text-slate-800 mt-4">{cat.name}</h3>
-              <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">{cat.description}</p>
+              <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">asdasdasdasdkjaskdhaskjhdajkhdk</p>
             </div>
 
             {/* Stats list */}
@@ -66,7 +73,7 @@ export const CategoriesView: React.FC<CategoriesViewProps> = ({ products, onSele
 
             {/* Action button */}
             <button
-              onClick={() => onSelectCategory(cat.name)}
+              onClick={() => onSelectCategory(cat?.id)}
               className="mt-6 w-full py-2 bg-slate-50 hover:bg-blue-50 text-slate-600 hover:text-blue-600 rounded-lg text-xs font-bold transition-colors cursor-pointer"
             >
               Browse Category Products

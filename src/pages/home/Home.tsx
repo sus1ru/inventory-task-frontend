@@ -250,6 +250,7 @@ function Home() {
   const [isAddEditOpen, setIsAddEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
 
   // Handlers for Add / Edit
   const handleOpenAddModal = () => {
@@ -284,23 +285,11 @@ function Home() {
     setIsDeleteOpen(true);
   };
 
-  const handleConfirmDelete = async () => {
-    if (currentProduct) {
-      try {
-        await deleteProduct(currentProduct.id).unwrap();
-        setIsDeleteOpen(false);
-        setCurrentProduct(null);
-      } catch (err) {
-        console.error("Failed to delete product via API:", err);
-        setIsDeleteOpen(false);
-        setCurrentProduct(null);
-      }
-    }
-  };
-
   // Handlers for Category drilldown
-  const handleBrowseCategory = (category: string) => {
+  const handleBrowseCategory = (category: number) => {
+    console.log('Selected category ID:', category);
     setActiveTab('products');
+    setSelectedCategory(category);
   };
 
   // Helper to determine navbar title
@@ -357,6 +346,7 @@ function Home() {
                 onAddProduct={handleOpenAddModal}
                 onEditProduct={handleOpenEditModal}
                 onDeleteProduct={handleOpenDeleteModal}
+                catId={selectedCategory}
                  
                 />
               )}
@@ -383,7 +373,6 @@ function Home() {
       <DeleteConfirmModal
         isOpen={isDeleteOpen}
         onClose={() => setIsDeleteOpen(false)}
-        onConfirm={handleConfirmDelete}
         product={currentProduct}
       />
     </div>

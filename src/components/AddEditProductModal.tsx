@@ -19,14 +19,14 @@ export const AddEditProductModal: React.FC<AddEditProductModalProps> = ({
   const [name, setName] = useState('');
     const [id, setId] = useState('');
 
-  const [category, setCategory] = useState(1);
+  const [category, setCategory] = useState<number>(1);
   const [price, setPrice] = useState('');
   const [quantity, setQuantity] = useState('');
     const [updated, setUpdated] = useState(false);
 
   // const [status, setStatus] = useState<'In Stock' | 'Low Stock' | 'Out of Stock'>('In Stock');
-    const [addProducts, { isLoading, error }] = useAddProductMutation();
-    const [updateProducts, { isLoading: isUpdating, error: updateError }] = useUpdateProductMutation();
+    const [addProducts, { isLoading }] = useAddProductMutation();
+    const [updateProducts] = useUpdateProductMutation();
       const { data } = useGetCategoriesQuery();
   const categories = data?.results
 
@@ -71,13 +71,12 @@ export const AddEditProductModal: React.FC<AddEditProductModalProps> = ({
       return;
     }
     if (!updated && name && category && price && quantity) {
-      const data = await addProducts({name, category, price: parseFloat(price), quantity: parseInt(quantity, 10)}).unwrap();
+      await addProducts({name, category, price: parseFloat(price), quantity: parseInt(quantity, 10)}).unwrap();
       // console.log(data,"data")
       onClose();
     }
     if(updated == true){
-      // console.log("data",name, category, price, quantity)
-      const data = await updateProducts({id: id, name, category, price: parseFloat(price), quantity: parseInt(quantity, 10)}).unwrap();
+       await updateProducts({id: id, name, category, price: parseFloat(price), quantity: parseInt(quantity, 10)}).unwrap();
       onClose();
     }
   };
@@ -137,7 +136,7 @@ export const AddEditProductModal: React.FC<AddEditProductModalProps> = ({
               </label>
               <select
                 value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                onChange={(e) => setCategory(Number(e?.target?.value))}
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
               >
                 {categories?.map((cat) => (
@@ -204,12 +203,16 @@ export const AddEditProductModal: React.FC<AddEditProductModalProps> = ({
             >
               Cancel
             </button>
-            <button
+            
+
+              <button
               type="submit"
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm shadow-blue-500/20"
-            >
-              Save Product
+              >{
+                isLoading ? <p>Adding Product...</p> : <p> Save Product</p>
+              }
             </button>
+            
           </div>
         </form>
       </div>

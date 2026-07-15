@@ -22,7 +22,6 @@ export const productsApi = createApi({
     if (typeof query === "string") {
     if (query.startsWith("http")) {
       const search = new URL(query).search;
-      console.log(search,"asdasdsearch")
       return `/products/${search}`;
     }
 
@@ -54,7 +53,7 @@ export const productsApi = createApi({
     }),
     deleteProduct: builder.mutation<{ success: boolean; id: string }, string>({
       query: (id) => ({
-        url: `/products/${id}`,
+        url: `/products/${id}/`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Product'],

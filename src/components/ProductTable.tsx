@@ -34,13 +34,12 @@ export const ProductTable = ({
   onAddProduct,
   onEditProduct,
   onDeleteProduct,
+  catId
 }: ProductTableProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [selectedCategoryName, setSelectedCategoryName] = useState<string | null>(null);
   const [selectedPage, setSelectedPage] = useState<string | null | undefined>();
-  const [status, setStatus] = useState<string | null>("");
-
 
   const [currentPage, setCurrentPage] = useState(1);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
@@ -69,11 +68,9 @@ export const ProductTable = ({
   }, [searchTerm, selectedCategory]);
   
 
-console.log("selectedPage", selectedPage)
 const query =
 searchTerm || selectedCategory || selectedPage || null;
 
-console.log("Asdasdadadad")
   const {
     data: products,
     isLoading,
@@ -113,6 +110,13 @@ console.log("Asdasdadadad")
       currency: 'USD',
     }).format(val);
   };
+
+  useEffect(() => { 
+
+    if(catId){
+      setSelectedCategory(catId)
+    }
+  },[])
 
   return (
     <div className="space-y-4">

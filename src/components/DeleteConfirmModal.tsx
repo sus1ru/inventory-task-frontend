@@ -1,20 +1,35 @@
 import React from 'react';
 import { FiAlertTriangle, FiX } from 'react-icons/fi';
 import type { Product } from '../types';
+import { useDeleteProductMutation } from '@/store/productsApi';
 
 interface DeleteConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
   product: Product | null;
 }
 
 export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
   isOpen,
   onClose,
-  onConfirm,
   product,
 }) => {
+
+  const [data, isloading, error] = useDeleteProductMutation();
+
+  async function  handleDelete (){
+    if(product){
+      try{
+
+        await data(product.id).unwrap()
+        onClose()
+      }
+      catch(err){
+        console.error('Failed to delete the product:', err);
+      }
+    }
+  }
+
   if (!isOpen || !product) return null;
 
   return (
@@ -51,7 +66,7 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
           </button>
           <button
             type="button"
-            onClick={onConfirm}
+            onClick={handleDelete}
             className="px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm shadow-red-500/20"
           >
             Delete
