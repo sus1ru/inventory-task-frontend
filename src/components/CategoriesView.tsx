@@ -30,12 +30,9 @@ export const CategoriesView: React.FC<CategoriesViewProps> = ({ onSelectCategory
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {categories.map((cat) => {
         const Icon = FiCpu;
-        const catProducts = productsData?.results?.filter(p => p?.category === cat?.id);
+        const catProducts = cat?.products
         const count = catProducts?.length;
         const totalStock = catProducts?.reduce((acc, p) => acc + (p.quantity || 0), 0);
-        // const avgPrice = count
-        //   ? catProducts.reduce((acc, p) => acc + p.price, 0) / count
-        //   : 0;1
 
         return (
           <div

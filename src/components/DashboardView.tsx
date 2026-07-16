@@ -1,6 +1,8 @@
 import React from 'react';
 import { FiBox, FiAlertTriangle, FiDollarSign, FiTrendingUp } from 'react-icons/fi';
 import type { Dashboard, Product } from '../types';
+import { useGetCategoriesQuery } from '@/store/categoryApi';
+import { useGetProductsQuery } from '@/store/productsApi';
 
 
 interface DashboardViewProps extends Dashboard {
@@ -46,6 +48,20 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     },
   ];
 
+const {
+  data,
+  isLoading: productsLoading,
+} = useGetProductsQuery(null);
+
+const {
+  data: categoriesData,
+  isLoading: categoriesLoading,
+} = useGetCategoriesQuery();
+
+console.log('categoriesData', categoriesData)
+if (productsLoading || categoriesLoading) {
+  return <p>Loading...</p>;
+}
   return (
     <div className="space-y-6">
       {/* Metric Cards Grid */}
@@ -71,19 +87,20 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         {/* Recent Items / Quick Overview */}
         <div className="bg-white p-6 border border-slate-100 rounded-xl shadow-[0_1px_3px_0_rgba(0,0,0,0.02)]">
           <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4">Stock Breakdown by Category</h3>
-          <div className="space-y-3.5">
-            {['Electronics', 'Peripherals', 'Audio', 'Networking', 'Displays'].map((category) => {
-              const catProducts = products.filter(p => p.category === category);
-              const count = catProducts.length;
-              const totalQty = catProducts.reduce((acc, p) => acc + p.quantity, 0);
-              const pct = products.length ? (count / products.length) * 100 : 0;
+          <div className="space-y1-3.5">
+            {categoriesData?.results?.map((category: any) => {
+              const catProducts = category?.products
+              if(!catProducts || catProducts.length === 0) return null;
+              const count = catProducts?.length ;
+              const totalQty = catProducts?.reduce((acc, p) => acc + (p.quantity || 0), 0);
+              const pct = data?.results?.length ? (count / data?.results?.length) * 100 : 0;
 
               return (
-                <div key={category} className="space-y-1.5">
-                  <div className="flex justify-between text-xs font-semibold text-slate-600">
-                    <span>{category} ({count} products)</span>
+                <div key={category.id} className="space-y-1.5">
+                  <div className="flex justify-between text-xs font-semibold my-5 text-slate-600">
+                    <span>{category.name} ({count} products)</span>
                     <span>{totalQty} units</span>
-                  </div>1
+                  </div>
                   {/* Progress bar */}
                   <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
                     <div

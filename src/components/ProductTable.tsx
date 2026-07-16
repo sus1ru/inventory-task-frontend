@@ -37,6 +37,7 @@ export const ProductTable = ({
   catId
 }: ProductTableProps) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [selectedCategoryName, setSelectedCategoryName] = useState<string | null>(null);
   const [selectedPage, setSelectedPage] = useState<string | null | undefined>();
@@ -65,11 +66,11 @@ export const ProductTable = ({
   // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, selectedCategory]);
+  }, [debouncedSearch, selectedCategory]);
   
 
 const query =
-searchTerm || selectedCategory || selectedPage || null;
+debouncedSearch || selectedCategory || selectedPage || null;
 
   const {
     data: products,
@@ -83,7 +84,7 @@ searchTerm || selectedCategory || selectedPage || null;
   const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
-  // const currentProducts = filteredProducts.slice(startIndex, endIndex);
+
 
   // Helper to render product icons based on category
   const getProductIcon = (category: string) => {
@@ -117,6 +118,14 @@ searchTerm || selectedCategory || selectedPage || null;
       setSelectedCategory(catId)
     }
   },[])
+
+  useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedSearch(searchTerm);
+  }, 500);
+
+  return () => clearTimeout(timer);
+}, [searchTerm]);
 
   return (
     <div className="space-y-4">
