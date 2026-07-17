@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react';
-import { FiCpu, FiHeadphones, FiWifi, FiMonitor } from 'react-icons/fi';
-import { MdOutlineKeyboard } from 'react-icons/md';
-import type { Product } from '../types';
+import { FiCpu } from 'react-icons/fi';
+import { type Category, type Product } from '../types';
 import { useGetCategoriesQuery } from '@/store/categoryApi';
-import { useGetProductsQuery } from '@/store/productsApi';
 
 interface CategoriesViewProps {
   products: Product[];
@@ -11,10 +9,9 @@ interface CategoriesViewProps {
 }1
 
 export const CategoriesView: React.FC<CategoriesViewProps> = ({ onSelectCategory }) => {
-  const [categories, setCategories] = React.useState([])
+  const [categories, setCategories] = React.useState<Category[]>([]);
 
   const {data, error} = useGetCategoriesQuery();
-  const {data: productsData, isLoading, isError} = useGetProductsQuery(null);
 
   useEffect(() => {
     if (data?.results) {

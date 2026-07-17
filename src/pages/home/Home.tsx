@@ -5,9 +5,6 @@ import { DashboardView } from '@/components/DashboardView';
 import { Sidebar } from '@/components/Sidebar';
 import {
   useGetProductsQuery,
-  useAddProductMutation,
-  useUpdateProductMutation,
-  useDeleteProductMutation,
 } from '@/store/productsApi';
 import { ProductTable } from '@/components/ProductTable';
 import { CategoriesView } from '@/components/CategoriesView';
@@ -242,9 +239,6 @@ function Home() {
   const { data: products, isLoading, error, refetch } = useGetProductsQuery(null);
     const { data: dashboardData = {} as Dashboard} = useGetDashboardQuery();
   const productsData : Product [] = products?.results || [];
-  const [addProduct] = useAddProductMutation();
-  const [updateProduct] = useUpdateProductMutation();
-  const [deleteProduct] = useDeleteProductMutation();
 
   // Modal control states
   const [isAddEditOpen, setIsAddEditOpen] = useState(false);

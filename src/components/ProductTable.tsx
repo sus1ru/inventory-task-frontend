@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   FiSearch,
   FiPlus,
@@ -29,6 +29,7 @@ interface ProductTableProps {
   onAddProduct: () => void;
   onEditProduct: (product: Product) => void;
   onDeleteProduct: (product: Product) => void;
+  catId?: number | null;
 }
 export const ProductTable = ({
   onAddProduct,
@@ -41,7 +42,6 @@ export const ProductTable = ({
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [selectedCategoryName, setSelectedCategoryName] = useState<string | null>(null);
   const [selectedPage, setSelectedPage] = useState<string | null | undefined>();
-
   const [currentPage, setCurrentPage] = useState(1);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -74,8 +74,6 @@ debouncedSearch || selectedCategory || selectedPage || null;
 
   const {
     data: products,
-    isLoading,
-    error,
   } = useGetProductsQuery(query);
   const currentProducts = products?.results || [];
   const { data: categories  } = useGetCategoriesQuery();

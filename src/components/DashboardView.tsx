@@ -14,7 +14,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   total_categories,
   in_stock,
   low_stock,
-  products,
 }) => {  // Calculations
   
   const metrics = [
@@ -58,7 +57,6 @@ const {
   isLoading: categoriesLoading,
 } = useGetCategoriesQuery();
 
-console.log('categoriesData', categoriesData)
 if (productsLoading || categoriesLoading) {
   return <p>Loading...</p>;
 }
@@ -92,7 +90,7 @@ if (productsLoading || categoriesLoading) {
               const catProducts = category?.products
               if(!catProducts || catProducts.length === 0) return null;
               const count = catProducts?.length ;
-              const totalQty = catProducts?.reduce((acc, p) => acc + (p.quantity || 0), 0);
+              const totalQty = catProducts?.reduce((acc: number, p: Product) => acc + (p.quantity || 0), 0);
               const pct = data?.results?.length ? (count / data?.results?.length) * 100 : 0;
 
               return (
@@ -118,9 +116,9 @@ if (productsLoading || categoriesLoading) {
         <div className="bg-white p-6 border border-slate-100 rounded-xl shadow-[0_1px_3px_0_rgba(0,0,0,0.02)]">
           <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4">Critical Stock Alerts</h3>
           <div className="divide-y divide-slate-100">
-            {products.filter(p => p.status === 'Low Stock' || p.status === 'Out of Stock').length > 0 ? (
-              products
-                .filter(p => p.status === 'Low Stock' || p.status === 'Out of Stock')
+            {data && data?.results?.filter(p => p.stock_status === 'Low Stock' || p.stock_status === 'Out of Stock').length > 0 ? (
+              data?.results
+                .filter(p => p.stock_status === 'Low Stock' || p.stock_status === 'Out of Stock')
                 .map((product) => (
                   <div key={product.id} className="py-3 flex items-center justify-between first:pt-0 last:pb-0">
                     <div>
@@ -130,9 +128,9 @@ if (productsLoading || categoriesLoading) {
                     <div className="flex items-center space-x-3">
                       <span className="text-xs font-medium text-slate-500">{product.quantity} left</span>
                       <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
-                        product.status === 'Low Stock' ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-700'
+                        product.stock_status === 'Low Stock' ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-700'
                       }`}>
-                        {product.status}
+                        {product.stock_status}
                       </span>
                     </div>
                   </div>

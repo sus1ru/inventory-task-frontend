@@ -15,7 +15,7 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
   product,
 }) => {
 
-  const [data, isloading, error] = useDeleteProductMutation();
+  const [data] = useDeleteProductMutation();
 
   async function  handleDelete (){
     if(product){

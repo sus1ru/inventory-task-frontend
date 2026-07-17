@@ -5,7 +5,7 @@ export interface Product {
   category: string;
   price: number;
   quantity: number;
-  status: 'In Stock' | 'Low Stock' | 'Out of Stock';
+  stock_status: 'In Stock' | 'Low Stock' | 'Out of Stock';
 }
 export interface AddProductRequest {
   name: string;
@@ -44,6 +44,7 @@ export interface Category {
   id: number;
   name: string;
   created_at: string;
+  products: Product[];
 }
 
 export type GetProductsQuery = 
