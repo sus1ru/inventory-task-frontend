@@ -30,7 +30,6 @@ const divRef = useRef<HTMLDivElement>(null);
   }
   function handleLogout() {
     // Implement your logout logic here
-    console.log('User logged out');
     localStorage.removeItem('token');
     window.location.href = '/login'; // Redirect to login page after logout
   }

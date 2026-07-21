@@ -11,6 +11,11 @@ import { CategoriesView } from '@/components/CategoriesView';
 import { DeleteConfirmModal } from '@/components/DeleteConfirmModal';
 import { AddEditProductModal } from '@/components/AddEditProductModal';
 import { useGetDashboardQuery } from '@/store/dashboardApi';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+import { DashboardSkeleton } from '@/components/DashboardSkeleton';
+import { ProductSkeleton } from '@/components/ProductSkeleton';
+import { CategoriesSkeleton } from '@/components/CategoriesSkeleton';
 
 // Seed exactly 24 products for realistic mock data
 // const INITIAL_PRODUCTS: Product[] = [
@@ -233,7 +238,7 @@ import { useGetDashboardQuery } from '@/store/dashboardApi';
 // ];
 
 function Home() {
-  const [activeTab, setActiveTab] = useState('products');
+  const [activeTab, setActiveTab] = useState('dashboard');
 
   // RTK Query API Hooks
   const { data: products, isLoading, error, refetch } = useGetProductsQuery(null);
@@ -300,22 +305,30 @@ function Home() {
     }
   };
 
+  const renderLoadingSkeleton = () => {
+  if (activeTab === "dashboard") {
+    return <DashboardSkeleton />;
+  } 
+  else if (activeTab === "products") {
+    return <ProductSkeleton />;
+  } 
+  else if (activeTab === "categories") {
+    return <CategoriesSkeleton/>;
+  }
+  return null;
+};
+
   return (
     <div className="flex min-h-screen bg-slate-50">
       {/* Sidebar - Componentized */}
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-
       {/* Main Content Space */}
       <div className="flex-1 flex flex-col min-w-0">
         <Navbar title={getNavbarTitle()} />
 
         <main className="flex-1 p-8 overflow-y-auto max-w-[1400px] w-full mx-auto">
-          {isLoading ? (
-            <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-              <div className="w-12 h-12 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
-              <p className="text-sm font-medium text-slate-500">Loading products...</p>
-            </div>
-          ) : error ? (
+          {isLoading ? renderLoadingSkeleton()
+           : error ? (
             <div className="flex flex-col items-center justify-center min-h-[400px] p-6 bg-red-50/50 border border-red-100 rounded-2xl space-y-4 max-w-md mx-auto mt-12 shadow-sm animate-fade-in">
               <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold text-xl">!</div>
               <h3 className="text-lg font-semibold text-slate-800">Failed to load products</h3>
@@ -334,7 +347,6 @@ function Home() {
               {activeTab === 'dashboard' && (
                 <DashboardView {...dashboardData} products={productsData}  />
               )}
-
               {activeTab === 'products' && (
                 <ProductTable
                 onAddProduct={handleOpenAddModal}
