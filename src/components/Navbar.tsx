@@ -1,12 +1,19 @@
 import React, { useEffect, useRef } from 'react';
 import { FiBell, FiSettings } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+import { RxCross1, RxHamburgerMenu } from "react-icons/rx";
+import type { Dispatch, SetStateAction } from "react";
+
 
 interface NavbarProps {
   title: string;
+  openSidebar: boolean;
+  setOpenSidebar: Dispatch<SetStateAction<boolean>>;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ title }) => {
+export const Navbar: React.FC<NavbarProps> = ({ title, setOpenSidebar, openSidebar }) => {
   const [open, setOpen] = React.useState(false);
+  const navigate = useNavigate()
 const divRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,10 +40,20 @@ const divRef = useRef<HTMLDivElement>(null);
     localStorage.removeItem('token');
     window.location.href = '/login'; // Redirect to login page after logout
   }
+  console.log("open:", open);
 
   return (
-    <header className="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-8 sticky top-0 z-30">
+    <header className="relative z-10 h-16 bg-white border-b border-slate-100 flex items-center justify-between px-8 sticky top-0 z-30">
       {/* Page Title */}
+       <div className='md:hidden cursor-pointer' onClick={()=>setOpenSidebar(prev => !prev)}>
+          {
+            openSidebar ? 
+            <RxCross1 />
+            : 
+            <RxHamburgerMenu />
+
+          }
+        </div>
       <h1 className="text-xl font-bold text-slate-800 tracking-tight">
         {title}
       </h1>
@@ -54,19 +71,22 @@ const divRef = useRef<HTMLDivElement>(null);
         <button className="p-2 rounded-full hover:bg-slate-50 text-slate-500 hover:text-slate-800 transition-colors">
           <FiSettings className="w-5 h-5" />
         </button>
-
         {/* Divider */}
         <div className="h-6 w-px bg-slate-200"></div>
-
         {/* User Profile Avatar */}
         <div className='relative'>
           {
-            open && <div ref={divRef} onClick={handleLogout} className='absolute -bottom-[150%] w-[100px]  -left-[150%] bg-white shadow-lg rounded-lg px-4 py-2 transition-all duration-300 ease-in-out transform origin-top-right hover:bg-sky-300 hover:text-black cursor-pointer'>
+            open && ( <div ref={divRef}className='absolute top-[100%] w-[200px]  -left-[450%] bg-white  shadow-lg rounded-lg  transition-all duration-300 ease-in-out transform origin-top-right  cursor-pointer'>
+            <div  onClick={handleLogout} className='   transition-all p-4 duration-300 ease-in-out transform origin-top-right hover:bg-sky-300 hover:text-black cursor-pointer'>
 Logout
+          </div> 
+         <div  onClick={() => navigate("/change-password")} className='  p-4   transition-all duration-300 ease-in-out transform origin-top-right hover:bg-sky-300 hover:text-black cursor-pointer'>
+Change Password
+          </div> 
           </div>
+          )
           }
           
-
         <button onClick={handleClick} className="flex cursor-pointer items-center space-x-2 focus:outline-none">
           <div className="relative">
             <img
@@ -83,7 +103,9 @@ Logout
           </div>
         </button>
         </div>
-      </div>
+       
+        </div>
     </header>
   );
 };
+1

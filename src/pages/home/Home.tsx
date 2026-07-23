@@ -11,234 +11,15 @@ import { CategoriesView } from '@/components/CategoriesView';
 import { DeleteConfirmModal } from '@/components/DeleteConfirmModal';
 import { AddEditProductModal } from '@/components/AddEditProductModal';
 import { useGetDashboardQuery } from '@/store/dashboardApi';
-import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { DashboardSkeleton } from '@/components/DashboardSkeleton';
 import { ProductSkeleton } from '@/components/ProductSkeleton';
 import { CategoriesSkeleton } from '@/components/CategoriesSkeleton';
 
-// Seed exactly 24 products for realistic mock data
-// const INITIAL_PRODUCTS: Product[] = [
-//   {
-//     id: '1',
-//     name: 'MacBook Pro M2',
-//     sku: 'LAP-MBP-2023',
-//     category: 'Electronics',
-//     price: 2499.00,
-//     quantity: 124,
-//     status: 'In Stock',
-//   },
-//   {
-//     id: '2',
-//     name: 'Mechanical Keyboard',
-//     sku: 'PER-KB-MX',
-//     category: 'Peripherals',
-//     price: 159.00,
-//     quantity: 8,
-//     status: 'Low Stock',
-//   },
-//   {
-//     id: '3',
-//     name: 'Noise Canceling Headphones',
-//     sku: 'AUD-HP-NC',
-//     category: 'Audio',
-//     price: 349.99,
-//     quantity: 0,
-//     status: 'Out of Stock',
-//   },
-//   {
-//     id: '4',
-//     name: 'WiFi 6 Mesh Router',
-//     sku: 'NET-RTR-W6',
-//     category: 'Networking',
-//     price: 199.00,
-//     quantity: 45,
-//     status: 'In Stock',
-//   },
-//   {
-//     id: '5',
-//     name: '4K Ultra HD Monitor',
-//     sku: 'DSP-4K-27',
-//     category: 'Displays',
-//     price: 599.00,
-//     quantity: 3,
-//     status: 'Low Stock',
-//   },
-//   {
-//     id: '6',
-//     name: 'iPhone 15 Pro',
-//     sku: 'PHO-IPH-15',
-//     category: 'Electronics',
-//     price: 999.00,
-//     quantity: 85,
-//     status: 'In Stock',
-//   },
-//   {
-//     id: '7',
-//     name: 'iPad Air',
-//     sku: 'TAB-IPA-AIR',
-//     category: 'Electronics',
-//     price: 599.00,
-//     quantity: 40,
-//     status: 'In Stock',
-//   },
-//   {
-//     id: '8',
-//     name: 'Gaming Mouse',
-//     sku: 'PER-GMS-X',
-//     category: 'Peripherals',
-//     price: 79.99,
-//     quantity: 110,
-//     status: 'In Stock',
-//   },
-//   {
-//     id: '9',
-//     name: 'Ergonomic Mouse',
-//     sku: 'PER-EMS-2',
-//     category: 'Peripherals',
-//     price: 99.00,
-//     quantity: 7,
-//     status: 'Low Stock',
-//   },
-//   {
-//     id: '10',
-//     name: 'USB-C Hub',
-//     sku: 'PER-UCH-5',
-//     category: 'Peripherals',
-//     price: 49.00,
-//     quantity: 3,
-//     status: 'Low Stock',
-//   },
-//   {
-//     id: '11',
-//     name: 'Studio Microphone',
-//     sku: 'AUD-MIC-ST',
-//     category: 'Audio',
-//     price: 149.00,
-//     quantity: 24,
-//     status: 'In Stock',
-//   },
-//   {
-//     id: '12',
-//     name: 'Bluetooth Speaker',
-//     sku: 'AUD-BTS-GO',
-//     category: 'Audio',
-//     price: 89.99,
-//     quantity: 0,
-//     status: 'Out of Stock',
-//   },
-//   {
-//     id: '13',
-//     name: 'Soundbar',
-//     sku: 'AUD-SND-TV',
-//     category: 'Audio',
-//     price: 249.00,
-//     quantity: 15,
-//     status: 'In Stock',
-//   },
-//   {
-//     id: '14',
-//     name: 'Gigabit Switch',
-//     sku: 'NET-GGB-SW',
-//     category: 'Networking',
-//     price: 120.00,
-//     quantity: 12,
-//     status: 'In Stock',
-//   },
-//   {
-//     id: '15',
-//     name: 'Ethernet Cable Cat8',
-//     sku: 'NET-ETH-C8',
-//     category: 'Networking',
-//     price: 19.99,
-//     quantity: 300,
-//     status: 'In Stock',
-//   },
-//   {
-//     id: '16',
-//     name: 'Wireless USB Dongle',
-//     sku: 'NET-WLS-DG',
-//     category: 'Networking',
-//     price: 29.99,
-//     quantity: 2,
-//     status: 'Low Stock',
-//   },
-//   {
-//     id: '17',
-//     name: 'Curved Gaming Monitor',
-//     sku: 'DSP-CGM-34',
-//     category: 'Displays',
-//     price: 899.00,
-//     quantity: 18,
-//     status: 'In Stock',
-//   },
-//   {
-//     id: '18',
-//     name: 'Portable Monitor',
-//     sku: 'DSP-PRT-15',
-//     category: 'Displays',
-//     price: 199.00,
-//     quantity: 0,
-//     status: 'Out of Stock',
-//   },
-//   {
-//     id: '19',
-//     name: 'Smart Light Bulb',
-//     sku: 'SMH-LTB-10',
-//     category: 'Electronics',
-//     price: 15.99,
-//     quantity: 150,
-//     status: 'In Stock',
-//   },
-//   {
-//     id: '20',
-//     name: 'Smart Plug',
-//     sku: 'SMH-PLG-02',
-//     category: 'Electronics',
-//     price: 19.99,
-//     quantity: 75,
-//     status: 'In Stock',
-//   },
-//   {
-//     id: '21',
-//     name: 'Wireless Charger',
-//     sku: 'PER-WLC-10',
-//     category: 'Peripherals',
-//     price: 39.99,
-//     quantity: 40,
-//     status: 'In Stock',
-//   },
-//   {
-//     id: '22',
-//     name: 'External SSD 1TB',
-//     sku: 'STO-SSD-1T',
-//     category: 'Electronics',
-//     price: 109.99,
-//     quantity: 55,
-//     status: 'In Stock',
-//   },
-//   {
-//     id: '23',
-//     name: 'MicroSD Card 256GB',
-//     sku: 'STO-MSD-256',
-//     category: 'Electronics',
-//     price: 24.99,
-//     quantity: 12,
-//     status: 'In Stock',
-//   },
-//   {
-//     id: '24',
-//     name: 'Laptop Cooling Pad',
-//     sku: 'PER-LCP-01',
-//     category: 'Peripherals',
-//     price: 34.99,
-//     quantity: 18,
-//     status: 'In Stock',
-//   },
-// ];
 
 function Home() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [openSidebar, SetOpenSidebar] = useState<boolean>(false);
 
   // RTK Query API Hooks
   const { data: products, isLoading, error, refetch } = useGetProductsQuery(null);
@@ -318,13 +99,14 @@ function Home() {
   return null;
 };
 
+console.log("asdasdta:", openSidebar);
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-slate-50 ">
       {/* Sidebar - Componentized */}
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Sidebar  open={openSidebar} activeTab={activeTab} setActiveTab={setActiveTab} />
       {/* Main Content Space */}
       <div className="flex-1 flex flex-col min-w-0">
-        <Navbar title={getNavbarTitle()} />
+        <Navbar title={getNavbarTitle()} setOpenSidebar={SetOpenSidebar} openSidebar={openSidebar} />
 
         <main className="flex-1 p-8 overflow-y-auto max-w-[1400px] w-full mx-auto">
           {isLoading ? renderLoadingSkeleton()

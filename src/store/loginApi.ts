@@ -9,6 +9,7 @@ interface LoginResponse {
   message: string;
   token: string;
 }
+interface formData { old_password: string; new_password: string; confirm_password: string }
 
 export const AuthApi = createApi({
   reducerPath: 'authApi',
@@ -23,9 +24,17 @@ export const AuthApi = createApi({
         body: credentials,
       }),
     }),
+    changepassword: builder.mutation<LoginResponse, formData >({
+      query: (passwordData) => ({
+        url: '/change-password/',
+        method: 'POST',
+        body: passwordData,
+      }),
+    }),
   }),
 });
 
 export const {
   useLoginMutation,
+  useChangepasswordMutation
 } = AuthApi;
